@@ -7,6 +7,7 @@ import {
 } from '@clerk/nextjs';
 import type { Metadata } from "next";
 import "./globals.css";
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -29,6 +30,7 @@ export default function RootLayout({
             <UserButton showName />
           </SignedIn>
           {children}
+          <SpeedInsights />
         </body>
       </html>
     </ClerkProvider>
