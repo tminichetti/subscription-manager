@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { X } from 'lucide-react';
+import { CreditCard, X } from 'lucide-react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { debounce } from 'lodash';
 
 type AddSubscriptionModalProps = {
     isOpen: boolean;
@@ -11,7 +12,18 @@ type AddSubscriptionModalProps = {
         startDate: string;
         price: number;
         billingCycle: string;
+        icon?: string;
     }) => void;
+};
+
+const getLogoUrl = (companyName: string) => {
+    if (!companyName || companyName.length < 3) return undefined;
+
+    const cleanName = companyName.toLowerCase()
+        .replace(/[^a-z0-9]/g, '')
+        .trim();
+
+    return cleanName ? `https://logo.clearbit.com/${cleanName}.com` : undefined;
 };
 
 export default function AddSubscriptionModal({ isOpen, onClose, onSave }: AddSubscriptionModalProps) {
@@ -21,6 +33,30 @@ export default function AddSubscriptionModal({ isOpen, onClose, onSave }: AddSub
         price: '',
         billingCycle: 'monthly'
     });
+
+    const [detectedLogo, setDetectedLogo] = useState<string | undefined>(undefined);
+    const [logoError, setLogoError] = useState(false);
+
+    // Créer une version debounced de la fonction de mise à jour du logo
+    const debouncedSetLogo = useCallback(
+        debounce((name: string) => {
+            setDetectedLogo(getLogoUrl(name));
+        }, 500), // Attendre 500ms après la dernière frappe
+        []
+    );
+
+    useEffect(() => {
+        if (formData.name && formData.name.length >= 3) {
+            debouncedSetLogo(formData.name);
+        } else {
+            setDetectedLogo(undefined);
+        }
+
+        // Cleanup
+        return () => {
+            debouncedSetLogo.cancel();
+        };
+    }, [formData.name, debouncedSetLogo]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -34,7 +70,8 @@ export default function AddSubscriptionModal({ isOpen, onClose, onSave }: AddSub
             name: formData.name,
             startDate: formData.startDate,
             price: parseFloat(formData.price),
-            billingCycle: formData.billingCycle
+            billingCycle: formData.billingCycle,
+            icon: detectedLogo // Envoyer l'URL du logo
         });
     };
 
@@ -53,16 +90,33 @@ export default function AddSubscriptionModal({ isOpen, onClose, onSave }: AddSub
                 <h2 className="text-2xl font-semibold mb-6">Ajouter un abonnement</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
+                    <div className="relative">
                         <label className="block text-lg mb-2">Nom de l&apos;abonnement</label>
-                        <input
-                            type="text"
-                            placeholder="Netflix, Spotify..."
-                            className="w-full p-2 rounded-lg bg-muted border border-border"
-                            value={formData.name}
-                            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                            required
-                        />
+                        <div className="relative">
+                            <input
+                                type="text"
+                                placeholder="Netflix, Spotify..."
+                                className="w-full p-2 pl-10 rounded-lg bg-muted border border-border"
+                                value={formData.name}
+                                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                                required
+                            />
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                                {detectedLogo && !logoError ? (
+                                    <img
+                                        src={detectedLogo}
+                                        alt={formData.name}
+                                        className="h-6 w-6 object-contain"
+                                        onError={() => {
+                                            setLogoError(true);
+                                            setDetectedLogo(undefined);
+                                        }}
+                                    />
+                                ) : (
+                                    <CreditCard className="h-4 w-4 text-muted-foreground" />
+                                )}
+                            </div>
+                        </div>
                     </div>
 
                     <div>

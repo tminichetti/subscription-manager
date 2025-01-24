@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { CalendarDays, Plus } from 'lucide-react';
+import { CalendarDays, Plus, CreditCard } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
 import AddSubscriptionModal from './AddSubscriptionModal';
 
@@ -15,10 +15,9 @@ type CalendarProps = {
         billingCycle: string;
         icon?: string;
     }[];
-    monthlySpend: number;
 };
 
-export default function SubscriptionCalendar({ subscriptions, monthlySpend }: CalendarProps) {
+export default function SubscriptionCalendar({ subscriptions }: CalendarProps) {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const { isSignedIn } = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -192,12 +191,20 @@ export default function SubscriptionCalendar({ subscriptions, monthlySpend }: Ca
                                     {subscriptionsForDay.map(sub => (
                                         <div
                                             key={sub.id}
-                                            className="text-xs p-1 mt-1 truncate bg-primary/10 rounded"
+                                            className="text-xs p-1 mt-1 truncate bg-primary/10 rounded flex items-center gap-2"
                                             title={`${sub.name} - ${sub.price.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}`}
                                         >
-                                            {sub.icon && <span className="mr-1">{sub.icon}</span>}
+                                            {sub.icon ? (
+                                                <img
+                                                    src={sub.icon}
+                                                    alt={sub.name}
+                                                    className="h-4 w-4 object-contain"
+                                                />
+                                            ) : (
+                                                <CreditCard className="h-3 w-3" />
+                                            )}
                                             <span className="font-medium">{sub.name}</span>
-                                            <span className="text-muted-foreground ml-1">
+                                            <span className="text-muted-foreground ml-auto">
                                                 {sub.price.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
                                             </span>
                                         </div>
