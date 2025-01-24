@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { CalendarDays } from 'lucide-react';
 
 type CalendarProps = {
     subscriptions: {
@@ -27,6 +28,10 @@ export default function SubscriptionCalendar({ subscriptions, monthlySpend }: Ca
         return firstDay.getDay() || 7;
     };
 
+    const goToToday = () => {
+        setCurrentMonth(new Date());
+    };
+
     return (
         <div className="w-full max-w-3xl mx-auto p-4 bg-card rounded-lg">
             {/* En-tête du calendrier */}
@@ -38,7 +43,7 @@ export default function SubscriptionCalendar({ subscriptions, monthlySpend }: Ca
                     >
                         ←
                     </button>
-                    <h2 className="text-xl font-semibold">
+                    <h2 className="text-xl font-semibold capitalize">
                         {currentMonth.toLocaleString('fr-FR', { month: 'long', year: 'numeric' })}
                     </h2>
                     <button
@@ -46,6 +51,13 @@ export default function SubscriptionCalendar({ subscriptions, monthlySpend }: Ca
                         className="p-2 hover:bg-muted rounded-full"
                     >
                         →
+                    </button>
+                    <button
+                        onClick={goToToday}
+                        className="flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-muted rounded-md transition-colors"
+                    >
+                        <CalendarDays className="h-4 w-4" />
+                        <span>Aujourd&apos;hui</span>
                     </button>
                 </div>
                 <div className="text-xl font-bold">
