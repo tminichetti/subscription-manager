@@ -10,7 +10,9 @@ export async function POST(request: Request) {
         }
 
         const data = await request.json();
-        const startDate = new Date(data.startDate);
+        if (!data || !data.name || !data.startDate || !data.price || !data.billingCycle) {
+            return new NextResponse('Missing required fields', { status: 400 });
+        }
 
         let user = await prisma.user.findUnique({
             where: { clerkId }
@@ -25,12 +27,11 @@ export async function POST(request: Request) {
         const subscription = await prisma.subscription.create({
             data: {
                 name: data.name,
-                startDate: startDate,
-                renewalDate: startDate,
-                price: data.price,
+                startDate: new Date(data.startDate),
+                price: parseFloat(data.price),
+                billingCycle: data.billingCycle,
                 userId: user.id,
-                status: 'active',
-                billingCycle: data.billingCycle
+                status: 'active'
             }
         });
 

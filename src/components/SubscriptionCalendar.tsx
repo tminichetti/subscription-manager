@@ -12,7 +12,6 @@ type CalendarProps = {
         name: string;
         price: number;
         startDate: Date;
-        renewalDate: Date;
         billingCycle: string;
         icon?: string;
     }[];
@@ -42,7 +41,7 @@ export default function SubscriptionCalendar({ subscriptions, monthlySpend }: Ca
         name: string;
         startDate: string;
         price: number;
-        renewalDate: string;
+        billingCycle: string;
     }) => {
         try {
             const response = await fetch('/api/subscriptions', {
@@ -53,16 +52,16 @@ export default function SubscriptionCalendar({ subscriptions, monthlySpend }: Ca
                 body: JSON.stringify({
                     name: subscriptionData.name,
                     startDate: subscriptionData.startDate,
-                    renewalDate: subscriptionData.renewalDate,
-                    price: subscriptionData.price
+                    price: subscriptionData.price,
+                    billingCycle: subscriptionData.billingCycle
                 }),
             });
 
             if (!response.ok) {
-                throw new Error('Erreur lors de l\'enregistrement');
+                const error = await response.text();
+                throw new Error(error);
             }
 
-            // Fermer le modal et rafraîchir la page
             setIsModalOpen(false);
             window.location.reload();
         } catch (error) {
@@ -122,26 +121,27 @@ export default function SubscriptionCalendar({ subscriptions, monthlySpend }: Ca
                     {Array.from({ length: getDaysInMonth(currentMonth) }).map((_, index) => {
                         const day = index + 1;
                         const subscriptionsForDay = subscriptions.filter(sub => {
-                            const renewalDate = new Date(sub.renewalDate);
                             const startDate = new Date(sub.startDate);
-
-                            const dayMatches = renewalDate.getDate() === day;
-
                             const currentDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
-                            const isAfterStart = currentDate >= startDate;
 
-                            console.log('isAfterStart', isAfterStart);
-                            console.log('dayMatches', dayMatches);
-                            console.log('renewalDate', renewalDate);
-                            console.log('currentDate', currentDate);
-                            console.log('startDate', startDate);
+                            // Vérifier si c'est le jour de début
+                            const isStartDay = startDate.getDate() === day &&
+                                startDate.getMonth() === currentMonth.getMonth() &&
+                                startDate.getFullYear() === currentMonth.getFullYear();
 
-                            return dayMatches && isAfterStart && (
-                                renewalDate.getDate() === day && (
-                                    (renewalDate.getDate() === day) ||
-                                    (renewalDate.getMonth() === currentMonth.getMonth())
-                                )
-                            );
+                            // Pour les renouvellements mensuels
+                            const isMonthlyRenewal = sub.billingCycle === 'monthly' &&
+                                startDate.getDate() === day && // Même jour du mois
+                                currentDate > startDate; // Date après le début
+
+                            // Pour les renouvellements annuels
+                            const isYearlyRenewal = sub.billingCycle === 'yearly' &&
+                                startDate.getDate() === day &&
+                                startDate.getMonth() === currentMonth.getMonth() &&
+                                currentDate > startDate &&
+                                currentDate.getFullYear() > startDate.getFullYear();
+
+                            return isStartDay || isMonthlyRenewal || isYearlyRenewal;
                         });
 
                         return (

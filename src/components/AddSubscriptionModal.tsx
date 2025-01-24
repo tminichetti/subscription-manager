@@ -10,7 +10,7 @@ type AddSubscriptionModalProps = {
         name: string;
         startDate: string;
         price: number;
-        renewalDate: string;
+        billingCycle: string;
     }) => void;
 };
 
@@ -25,14 +25,16 @@ export default function AddSubscriptionModal({ isOpen, onClose, onSave }: AddSub
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Utiliser la date de début comme première date de renouvellement
-        const startDate = new Date(formData.startDate);
+        if (!formData.name || !formData.startDate || !formData.price) {
+            alert('Veuillez remplir tous les champs');
+            return;
+        }
 
         onSave({
             name: formData.name,
-            startDate: startDate.toISOString(),
+            startDate: formData.startDate,
             price: parseFloat(formData.price),
-            renewalDate: startDate.toISOString() // Utiliser la même date pour commencer
+            billingCycle: formData.billingCycle
         });
     };
 

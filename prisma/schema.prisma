@@ -25,7 +25,6 @@ model Subscription {
   name         String
   price        Float
   startDate    DateTime
-  renewalDate  DateTime
   status       String   @default("active")
   billingCycle String   @default("monthly")
   userId       String
