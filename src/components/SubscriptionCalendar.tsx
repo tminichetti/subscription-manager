@@ -70,6 +70,34 @@ export default function SubscriptionCalendar({ subscriptions, monthlySpend }: Ca
         }
     };
 
+    // Ajout de la fonction pour calculer les dépenses du mois
+    const calculateMonthlySpend = () => {
+        return subscriptions.reduce((total, sub) => {
+            const startDate = new Date(sub.startDate);
+            const currentDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+
+            // Pour le mois en cours, comparer avec la date actuelle
+            const today = new Date();
+            const isCurrentMonth = currentMonth.getMonth() === today.getMonth() &&
+                currentMonth.getFullYear() === today.getFullYear();
+
+            // Si c'est le mois en cours, vérifier si on a dépassé la date de début
+            const isActive = isCurrentMonth ?
+                startDate <= today : // Pour le mois en cours
+                startDate <= currentDate; // Pour les autres mois
+
+            if (isActive) {
+                if (sub.billingCycle === 'monthly') {
+                    return total + sub.price;
+                } else if (sub.billingCycle === 'yearly') {
+                    const isRenewalMonth = startDate.getMonth() === currentMonth.getMonth();
+                    return isRenewalMonth ? total + sub.price : total;
+                }
+            }
+            return total;
+        }, 0);
+    };
+
     return (
         <>
             <div className="w-full max-w-3xl mx-auto p-4 bg-card rounded-lg flex flex-col gap-4">
@@ -100,7 +128,10 @@ export default function SubscriptionCalendar({ subscriptions, monthlySpend }: Ca
                         </button>
                     </div>
                     <div className="text-xl font-bold">
-                        {monthlySpend.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
+                        {calculateMonthlySpend().toLocaleString('fr-FR', {
+                            style: 'currency',
+                            currency: 'EUR'
+                        })}
                     </div>
                 </div>
 
