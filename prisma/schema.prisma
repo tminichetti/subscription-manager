@@ -21,12 +21,12 @@ model User {
 }
 
 model Subscription {
-  id          String   @id @default(cuid())
-  name        String
-  price       Float
-  startDate   DateTime
-  renewalDate DateTime
-  status      String   @default("active")
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
+  id           String   @id @default(cuid())
+  name         String
+  price        Float
+  startDate    DateTime
+  status       String   @default("active")
+  billingCycle String   @default("monthly")
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
 }
