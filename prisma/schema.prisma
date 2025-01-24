@@ -27,6 +27,7 @@ model Subscription {
   startDate    DateTime
   status       String   @default("active")
   billingCycle String   @default("monthly")
+  icon         String?
   userId       String
   user         User     @relation(fields: [userId], references: [id])
 }

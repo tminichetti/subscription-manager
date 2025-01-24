@@ -16,14 +16,9 @@ export default async function Home() {
     }
   }) : [];
 
-  const monthlySpend = subscriptions.reduce((total: number, sub: { price: number }) => total + sub.price, 0);
-
   return (
     <div className="min-h-screen p-8">
-      <SubscriptionCalendar
-        subscriptions={subscriptions}
-        monthlySpend={monthlySpend}
-      />
+      <SubscriptionCalendar subscriptions={subscriptions} />
     </div>
   );
 }
