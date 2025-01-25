@@ -3,6 +3,7 @@
 import { CreditCard, X } from 'lucide-react';
 import React, { useEffect, useState, useCallback } from 'react';
 import { debounce } from 'lodash';
+import Image from 'next/image';
 
 type AddSubscriptionModalProps = {
     isOpen: boolean;
@@ -16,14 +17,22 @@ type AddSubscriptionModalProps = {
     }) => void;
 };
 
-const getLogoUrl = (companyName: string) => {
+const searchBrandLogo = async (companyName: string) => {
     if (!companyName || companyName.length < 3) return undefined;
 
-    const cleanName = companyName.toLowerCase()
-        .replace(/[^a-z0-9]/g, '')
-        .trim();
+    try {
+        const response = await fetch(`https://api.brandfetch.io/v2/search/${companyName}?c=1idY3ApOoeKEPV5HOnp`);
+        if (!response.ok) return undefined;
 
-    return cleanName ? `https://logo.clearbit.com/${cleanName}.com?format=png&size=30` : undefined;
+        const data = await response.json();
+        if (data && data.length > 0) {
+            // Utiliser directement l'URL de l'icône fournie
+            return data[0].icon;
+        }
+    } catch (error) {
+        console.error('Erreur lors de la recherche du logo:', error);
+    }
+    return undefined;
 };
 
 export default function AddSubscriptionModal({ isOpen, onClose, onSave }: AddSubscriptionModalProps) {
@@ -39,9 +48,12 @@ export default function AddSubscriptionModal({ isOpen, onClose, onSave }: AddSub
 
     // Créer une version debounced de la fonction de mise à jour du logo
     const debouncedSetLogo = useCallback(
-        debounce((name: string) => {
-            setDetectedLogo(getLogoUrl(name));
-        }, 500), // Attendre 500ms après la dernière frappe
+        debounce(async (name: string) => {
+            const logo = await searchBrandLogo(name);
+            console.log(logo);
+            setDetectedLogo(logo);
+            setLogoError(false);
+        }, 500),
         []
     );
 
@@ -52,7 +64,6 @@ export default function AddSubscriptionModal({ isOpen, onClose, onSave }: AddSub
             setDetectedLogo(undefined);
         }
 
-        // Cleanup
         return () => {
             debouncedSetLogo.cancel();
         };
@@ -103,14 +114,12 @@ export default function AddSubscriptionModal({ isOpen, onClose, onSave }: AddSub
                             />
                             <div className="absolute left-3 top-1/2 -translate-y-1/2">
                                 {detectedLogo && !logoError ? (
-                                    <img
+                                    <Image
                                         src={detectedLogo}
                                         alt={formData.name}
-                                        className="h-6 w-6 object-contain"
-                                        onError={() => {
-                                            setLogoError(true);
-                                            setDetectedLogo(undefined);
-                                        }}
+                                        width={24}
+                                        height={24}
+                                        className="object-contain border rounded-full"
                                     />
                                 ) : (
                                     <CreditCard className="h-4 w-4 text-muted-foreground" />

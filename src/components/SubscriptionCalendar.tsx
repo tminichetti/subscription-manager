@@ -129,11 +129,14 @@ export default function SubscriptionCalendar({ subscriptions }: CalendarProps) {
                             <span>Aujourd&apos;hui</span>
                         </button>
                     </div>
-                    <div className="text-xl font-bold">
-                        {calculateMonthlySpend().toLocaleString('fr-FR', {
-                            style: 'currency',
-                            currency: 'EUR'
-                        })}
+                    <div className="flex flex-col items-center gap-2">
+                        <span className="text-sm font-medium text-muted-foreground">Total mensuel :</span>
+                        <div className="text-xl font-bold">
+                            {calculateMonthlySpend().toLocaleString('fr-FR', {
+                                style: 'currency',
+                                currency: 'EUR'
+                            })}
+                        </div>
                     </div>
                 </div>
 
