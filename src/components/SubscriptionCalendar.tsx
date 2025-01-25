@@ -104,24 +104,24 @@ export default function SubscriptionCalendar({ subscriptions }: CalendarProps) {
         <>
             <div className="w-full max-w-3xl mx-auto p-4 bg-card rounded-lg flex flex-col gap-4">
                 {/* En-tête du calendrier */}
-                <div className="flex justify-between items-center mb-6 bg-black/5 p-4 rounded-lg">
-                    <div className="flex items-center bg-black/10 rounded-md">
+                <div className="flex justify-between items-center mb-6 bg-secondary p-4 rounded-lg">
+                    <div className="flex items-center bg-card rounded-md shadow-sm">
                         <button
                             onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)))}
-                            className="hover:bg-black/5 p-2 rounded-md transition-colors"
+                            className="hover:bg-accent p-2 rounded-md transition-colors"
                         >
                             ←
                         </button>
                         <button
                             onClick={goToToday}
-                            className="flex items-center gap-2 px-4 py-2 hover:bg-black/15 rounded-md transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-accent rounded-md transition-colors font-medium"
                         >
                             <CalendarDays className="h-4 w-4" />
                             <span>Today</span>
                         </button>
                         <button
                             onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)))}
-                            className="hover:bg-black/5 p-2 rounded-md transition-colors"
+                            className="hover:bg-accent p-2 rounded-md transition-colors"
                         >
                             →
                         </button>
@@ -129,10 +129,10 @@ export default function SubscriptionCalendar({ subscriptions }: CalendarProps) {
 
                     <div className="flex items-center gap-4">
                         <h2 className="px-4 flex items-center gap-2">
-                            <span className="text-2xl font-bold uppercase">
+                            <span className="text-2xl font-bold tracking-tight">
                                 {currentMonth.toLocaleString('fr-FR', { month: 'long' })}
                             </span>
-                            <span className="text-lg font-normal">
+                            <span className="text-lg text-muted-foreground">
                                 {currentMonth.toLocaleString('fr-FR', { year: 'numeric' })}
                             </span>
                         </h2>
@@ -194,9 +194,9 @@ export default function SubscriptionCalendar({ subscriptions }: CalendarProps) {
                                 key={day}
                                 className={cn(
                                     "aspect-square p-2 border rounded-lg",
-                                    "hover:bg-muted transition-colors",
+                                    "hover:bg-accent/50 transition-colors",
                                     "relative flex flex-col",
-                                    subscriptionsForDay.length > 0 && "bg-accent"
+                                    subscriptionsForDay.length > 0 && "bg-accent/70"
                                 )}
                             >
                                 <div className="text-sm absolute bottom-1 left-1/2 -translate-x-1/2 text-muted-foreground">

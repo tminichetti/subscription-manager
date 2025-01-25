@@ -5,8 +5,8 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import NavBar from '@/components/NavBar';
 
 export const metadata: Metadata = {
-  title: "SubManager - Gestion d'abonnements",
-  description: "Gérez facilement tous vos abonnements",
+  title: "SubTrack - Gérez vos abonnements simplement",
+  description: "SubTrack vous aide à suivre et gérer tous vos abonnements en un seul endroit. Visualisez vos dépenses mensuelles et ne manquez plus jamais un renouvellement.",
 };
 
 export default function RootLayout({
@@ -19,7 +19,7 @@ export default function RootLayout({
       <html lang="fr">
         <body>
           <NavBar />
-          <main className="pt-16">
+          <main className="pt-8">
             {children}
           </main>
           <SpeedInsights />

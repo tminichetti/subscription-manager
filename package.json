@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.10.1",
+    "@fontsource/inter": "^5.1.1",
     "@prisma/client": "^6.2.1",
+    "@radix-ui/colors": "^3.0.0",
     "@vercel/speed-insights": "^1.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
