@@ -104,31 +104,40 @@ export default function SubscriptionCalendar({ subscriptions }: CalendarProps) {
         <>
             <div className="w-full max-w-3xl mx-auto p-4 bg-card rounded-lg flex flex-col gap-4">
                 {/* En-tête du calendrier */}
-                <div className="flex justify-between items-center mb-6">
-                    <div className="flex items-center gap-4">
+                <div className="flex justify-between items-center mb-6 bg-black/5 p-4 rounded-lg">
+                    <div className="flex items-center bg-black/10 rounded-md">
                         <button
                             onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)))}
-                            className="p-2 hover:bg-muted rounded-full"
+                            className="hover:bg-black/5 p-2 rounded-md transition-colors"
                         >
                             ←
                         </button>
-                        <h2 className="text-xl font-semibold capitalize">
-                            {currentMonth.toLocaleString('fr-FR', { month: 'long', year: 'numeric' })}
-                        </h2>
+                        <button
+                            onClick={goToToday}
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-black/15 rounded-md transition-colors"
+                        >
+                            <CalendarDays className="h-4 w-4" />
+                            <span>Today</span>
+                        </button>
                         <button
                             onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)))}
-                            className="p-2 hover:bg-muted rounded-full"
+                            className="hover:bg-black/5 p-2 rounded-md transition-colors"
                         >
                             →
                         </button>
-                        <button
-                            onClick={goToToday}
-                            className="flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-muted rounded-md transition-colors"
-                        >
-                            <CalendarDays className="h-4 w-4" />
-                            <span>Aujourd&apos;hui</span>
-                        </button>
                     </div>
+
+                    <div className="flex items-center gap-4">
+                        <h2 className="px-4 flex items-center gap-2">
+                            <span className="text-2xl font-bold uppercase">
+                                {currentMonth.toLocaleString('fr-FR', { month: 'long' })}
+                            </span>
+                            <span className="text-lg font-normal">
+                                {currentMonth.toLocaleString('fr-FR', { year: 'numeric' })}
+                            </span>
+                        </h2>
+                    </div>
+
                     <div className="flex flex-col items-center gap-2">
                         <span className="text-sm font-medium text-muted-foreground">Total mensuel :</span>
                         <div className="text-xl font-bold">
