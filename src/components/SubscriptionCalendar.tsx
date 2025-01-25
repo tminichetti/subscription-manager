@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { CalendarDays, Plus, CreditCard } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
 import AddSubscriptionModal from './AddSubscriptionModal';
+import Image from 'next/image';
 
 type CalendarProps = {
     subscriptions: {
@@ -41,6 +42,7 @@ export default function SubscriptionCalendar({ subscriptions }: CalendarProps) {
         startDate: string;
         price: number;
         billingCycle: string;
+        icon?: string;
     }) => {
         try {
             const response = await fetch('/api/subscriptions', {
@@ -52,7 +54,8 @@ export default function SubscriptionCalendar({ subscriptions }: CalendarProps) {
                     name: subscriptionData.name,
                     startDate: subscriptionData.startDate,
                     price: subscriptionData.price,
-                    billingCycle: subscriptionData.billingCycle
+                    billingCycle: subscriptionData.billingCycle,
+                    icon: subscriptionData.icon
                 }),
             });
 
@@ -191,22 +194,20 @@ export default function SubscriptionCalendar({ subscriptions }: CalendarProps) {
                                     {subscriptionsForDay.map(sub => (
                                         <div
                                             key={sub.id}
-                                            className="text-xs p-1 mt-1 truncate bg-primary/10 rounded flex items-center gap-2"
+                                            className="text-xs p-1 mt-1 flex justify-center"
                                             title={`${sub.name} - ${sub.price.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}`}
                                         >
                                             {sub.icon ? (
-                                                <img
+                                                <Image
                                                     src={sub.icon}
                                                     alt={sub.name}
-                                                    className="h-4 w-4 object-contain"
+                                                    width={30}
+                                                    height={30}
+                                                    className="object-contain border rounded-full"
                                                 />
                                             ) : (
-                                                <CreditCard className="h-3 w-3" />
+                                                <CreditCard className="h-4 w-4 text-muted-foreground" />
                                             )}
-                                            <span className="font-medium">{sub.name}</span>
-                                            <span className="text-muted-foreground ml-auto">
-                                                {sub.price.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
-                                            </span>
                                         </div>
                                     ))}
                                 </div>

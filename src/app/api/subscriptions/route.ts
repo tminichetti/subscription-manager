@@ -30,6 +30,7 @@ export async function POST(request: Request) {
                 startDate: new Date(data.startDate),
                 price: parseFloat(data.price),
                 billingCycle: data.billingCycle,
+                icon: data.icon,
                 userId: user.id,
                 status: 'active'
             }

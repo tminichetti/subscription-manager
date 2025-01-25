@@ -23,7 +23,7 @@ const getLogoUrl = (companyName: string) => {
         .replace(/[^a-z0-9]/g, '')
         .trim();
 
-    return cleanName ? `https://logo.clearbit.com/${cleanName}.com` : undefined;
+    return cleanName ? `https://logo.clearbit.com/${cleanName}.com?format=png&size=30` : undefined;
 };
 
 export default function AddSubscriptionModal({ isOpen, onClose, onSave }: AddSubscriptionModalProps) {
